@@ -1,7 +1,7 @@
 import numpy as np
 
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Activation
 from keras.layers import LSTM
 import keras
 
@@ -34,9 +34,9 @@ def window_transform_series(series, window_size):
 # TODO: build an RNN to perform regression on our time series input/output data
 def build_part1_RNN(window_size):
     modelo = Sequential()
-
+    #Add LSTM layer with 5 hidden nodes
     modelo.add(LSTM(5, input_shape=(window_size,1)))
-
+    #Fully connected layer with one node
     modelo.add(Dense(1))
 
     return modelo
@@ -48,6 +48,7 @@ def cleaned_text(text):
     
     textSet = list(set(text))
     for i in textSet:
+        #Ignore characters in the punctuation array or if they are part of the lower case alphabet (ASCii from 97 to 122)  
         if  not((i in punctuation) or ((ord(i)>=97) and (ord(i)<=122))):
             text = text.replace(i, ' ')  
     return text
@@ -63,11 +64,10 @@ def window_transform_text(text, window_size, step_size):
     inputs = []
     outputs = []
 
+    #Define number of steps required in function of window_size and step size
+    steps = (len(text)-window_size)/(step_size)+1
     #Stores every input sequence and the respective output value in arrays
-    steps = (len(text)-window_size-step_size)/(step_size)
-    inputs += []
-    outputs += []
-    for i in range(int(np.floor(steps))+1):
+    for i in range(int(np.floor(steps))):
         inputs += [text[(i*step_size):(window_size+i*step_size)]]
         outputs += [text[window_size+i*step_size]]
     return inputs,outputs
@@ -77,6 +77,6 @@ def window_transform_text(text, window_size, step_size):
 def build_part2_RNN(window_size, num_chars):
     modelo = Sequential()
     modelo.add(LSTM(200, input_shape=(window_size, num_chars)))
-    modelo.add(Dense(num_chars, activation='relu'))
-    modelo.add(Dense(num_chars, activation='softmax'))
+    modelo.add(Dense(num_chars, activation='linear'))
+    modelo.add(Activation('softmax'))
     return modelo
