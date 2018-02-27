@@ -66,14 +66,18 @@ def window_transform_text(text, window_size, step_size):
     #Stores every input sequence and the respective output value in arrays
     steps = (len(text)-window_size-step_size)/(step_size)
     print('Possible steps: ', steps)
-    inputs += [text[0:window_size]]
-    outputs += [text[window_size]]
-    for i in range(int(np.floor(steps))):
-        inputs += [text[((i+1)*step_size):(window_size+(i+1)*step_size)]]
-        outputs += [text[window_size+(i+1)*step_size]]
+    inputs += []
+    outputs += []
+    for i in range(int(np.floor(steps))+1):
+        inputs += [text[(i*step_size):(window_size+i*step_size)]]
+        outputs += [text[window_size+i*step_size]]
     return inputs,outputs
 
 # TODO build the required RNN model: 
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
-    pass
+    modelo = Sequential()
+    modelo.add(LSTM(200, input_shape=(window_size, num_chars)))
+    modelo.add(Dense(num_chars, activation='relu'))
+    modelo.add(Dense(num_chars, activation='softmax'))
+    return modelo
