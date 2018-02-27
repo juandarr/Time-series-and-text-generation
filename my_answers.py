@@ -65,7 +65,6 @@ def window_transform_text(text, window_size, step_size):
 
     #Stores every input sequence and the respective output value in arrays
     steps = (len(text)-window_size-step_size)/(step_size)
-    print('Possible steps: ', steps)
     inputs += []
     outputs += []
     for i in range(int(np.floor(steps))+1):
